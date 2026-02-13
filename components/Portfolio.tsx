@@ -1,8 +1,28 @@
-'use client';
-
 import Link from 'next/link';
+import { supabase } from '@/lib/supabase';
 
-export default function Portfolio() {
+interface PortfolioItem {
+    id: string;
+    title: string;
+    description: string;
+    tech_stack: string[]; // Supabase stores arrays as strings/json, but our insert logic sends array
+    github_url: string;
+    live_url: string;
+    image_url: string;
+}
+
+export default async function Portfolio() {
+    const { data: portfolioData, error } = await supabase
+        .from('portfolios')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching portfolios:', error);
+    }
+
+    const projects: PortfolioItem[] = portfolioData || [];
+
     return (
         <section className="mb-32" id="portfolio">
             <h2 className="font-serif text-3xl font-bold mb-12 flex items-center gap-4">
@@ -10,70 +30,50 @@ export default function Portfolio() {
                 Selected Works
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-16">
-                {/* Project 1 */}
-                <div className="group border-b border-primary/5 pb-8">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">Distributed Pedagogical Systems</h3>
-                    <p className="text-sm opacity-80 mb-4 font-light">A micro-service architecture designed to serve adaptive learning materials at scale.</p>
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Python</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Django</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Redis</span>
-                    </div>
-                    <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
-                        View Project
-                        {/* Material Symbol Arrow replacement with text/entity or generic SVG if needed but leaving symbol class as it was used in HTML, though Lucide is better. User asked for specific code from HTML but also mentioned Lucide. The HTML uses material-symbols.
-                            I should probably replace with Lucide arrow for consistency if I switched the other one.
-                            HTML: <span class="material-symbols-outlined text-sm ml-1">arrow_forward</span>
-                            I'll use Lucide ArrowRight for better consistency.
-                         */}
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </Link>
-                </div>
+                {projects.map((project) => (
+                    <div key={project.id} className="group border-b border-primary/5 pb-8 flex flex-col h-full">
+                        {/* Image Preview */}
+                        <div className="aspect-video w-full bg-primary/5 rounded-lg mb-6 overflow-hidden relative">
+                            {project.image_url ? (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                    src={project.image_url}
+                                    alt={project.title}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                />
+                            ) : (
+                                <div className="w-full h-full flex items-center justify-center text-primary/20 font-mono text-xs">
+                                    NO PREVIEW
+                                </div>
+                            )}
+                        </div>
 
-                {/* Project 2 */}
-                <div className="group border-b border-primary/5 pb-8">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">Visualizing Global Data Streams</h3>
-                    <p className="text-sm opacity-80 mb-4 font-light">Real-time interactive dashboard visualizing demographic shifts in education metrics.</p>
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Next.js</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">D3.js</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">PostgreSQL</span>
-                    </div>
-                    <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
-                        View Project
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </Link>
-                </div>
+                        <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">{project.title}</h3>
+                        <p className="text-sm opacity-80 mb-4 font-light flex-grow">{project.description}</p>
 
-                {/* Project 3 */}
-                <div className="group border-b border-primary/5 pb-8">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">Open-Source Logic Library</h3>
-                    <p className="text-sm opacity-80 mb-4 font-light">A lightweight TypeScript library for handling complex conditional logic in web forms.</p>
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">TypeScript</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">NPM</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Jest</span>
-                    </div>
-                    <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
-                        View Project
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </Link>
-                </div>
+                        <div className="flex flex-wrap gap-3 mb-6">
+                            {project.tech_stack?.map((tech, i) => (
+                                <span key={i} className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded opacity-70">
+                                    {tech}
+                                </span>
+                            ))}
+                        </div>
 
-                {/* Project 4 */}
-                <div className="group border-b border-primary/5 pb-8">
-                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">Curriculum Mapping Engine</h3>
-                    <p className="text-sm opacity-80 mb-4 font-light">Automated tool for cross-referencing global curriculum standards via NLP.</p>
-                    <div className="flex flex-wrap gap-3 mb-6">
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">FastAPI</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">Transformers</span>
-                        <span className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded">React</span>
+                        <div className="flex items-center gap-6 mt-auto">
+                            {project.github_url && (
+                                <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all" href={project.github_url} target="_blank">
+                                    GitHub
+                                </Link>
+                            )}
+                            {project.live_url && (
+                                <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all group/link" href={project.live_url} target="_blank">
+                                    View Project
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                </Link>
+                            )}
+                        </div>
                     </div>
-                    <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest group-hover:gap-3 transition-all" href="#">
-                        View Project
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                    </Link>
-                </div>
+                ))}
             </div>
         </section>
     );

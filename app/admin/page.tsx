@@ -66,16 +66,16 @@ export default function AdminDashboard() {
         // Force inputs to clear by changing key
         setFormResetKey(prev => ({ ...prev, [activeTab]: prev[activeTab] + 1 }));
 
-        if (activeTab === 'achievements') {
-            setAchievementImage(null);
-        } else if (activeTab === 'portfolio') {
-            setPortfolioImage(null);
-            setTechStack([]); // Reset to empty
-        } else if (activeTab === 'blog') {
-            setBlogImage(null);
-            setIsPublished(false);
-            setBlogContent('');
-        }
+        const initialContext = {
+            achievements: { title: '', issuer: '', date: '', description: '', image: null, file: null },
+            portfolio: { title: '', description: '', techStack: [], githubUrl: '', liveUrl: '', image: null, file: null },
+            blog: { title: '', excerpt: '', content: '', image: null, file: null, isPublished: false }
+        };
+
+        setFormData(prev => ({
+            ...prev,
+            [activeTab]: initialContext[activeTab]
+        }));
 
         showToast('Changes Discarded', 'Your draft has been cleared.', 'success');
     };
@@ -104,29 +104,70 @@ export default function AdminDashboard() {
         return () => clearInterval(timer);
     });
 
-    const [achievementImage, setAchievementImage] = useState<string | null>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
-    const [portfolioImage, setPortfolioImage] = useState<string | null>(null);
-    const portfolioFileInputRef = useRef<HTMLInputElement>(null);
-    const [blogImage, setBlogImage] = useState<string | null>(null);
-    const blogFileInputRef = useRef<HTMLInputElement>(null);
-    const [isPublished, setIsPublished] = useState(false); // Default false (Draft)
-    const [blogContent, setBlogContent] = useState('');
+    // Unified Form State
+    const [formData, setFormData] = useState({
+        achievements: {
+            title: '',
+            issuer: '',
+            date: '',
+            description: '',
+            image: null as string | null,
+            file: null as File | null
+        },
+        portfolio: {
+            title: '',
+            description: '',
+            techStack: [] as string[],
+            githubUrl: '',
+            liveUrl: '',
+            image: null as string | null,
+            file: null as File | null
+        },
+        blog: {
+            title: '',
+            excerpt: '',
+            content: '',
+            image: null as string | null,
+            file: null as File | null,
+            isPublished: false
+        }
+    });
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const updateField = (tab: 'achievements' | 'portfolio' | 'blog', field: string, value: any) => {
+        setFormData(prev => ({
+            ...prev,
+            [tab]: {
+                ...prev[tab],
+                [field]: value
+            }
+        }));
+        setLastSaved(prev => ({
+            ...prev,
+            [tab]: new Date()
+        }));
+    };
+
+    // Refs for file inputs
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const portfolioFileInputRef = useRef<HTMLInputElement>(null);
+    const blogFileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, tab: 'achievements' | 'portfolio' | 'blog') => {
         const file = e.target.files?.[0];
         if (file) {
             const url = URL.createObjectURL(file);
-            setAchievementImage(url);
+            updateField(tab, 'image', url);
+            updateField(tab, 'file', file);
         }
     };
 
-    const handleDrop = (e: React.DragEvent) => {
+    const handleDrop = (e: React.DragEvent, tab: 'achievements' | 'portfolio' | 'blog') => {
         e.preventDefault();
         const file = e.dataTransfer.files?.[0];
         if (file) {
             const url = URL.createObjectURL(file);
-            setAchievementImage(url);
+            updateField(tab, 'image', url);
+            updateField(tab, 'file', file);
         }
     };
 
@@ -134,112 +175,147 @@ export default function AdminDashboard() {
         e.preventDefault();
     };
 
-    const triggerFileInput = () => {
-        fileInputRef.current?.click();
+    const triggerFileInput = (ref: React.RefObject<HTMLInputElement | null>) => {
+        ref.current?.click();
     };
-
-    const handlePortfolioImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setPortfolioImage(url);
-        }
-    };
-
-    const handlePortfolioDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        const file = e.dataTransfer.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setPortfolioImage(url);
-        }
-    };
-
-    const triggerPortfolioFileInput = () => {
-        portfolioFileInputRef.current?.click();
-    };
-
-    const handleBlogImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setBlogImage(url);
-        }
-    };
-
-    const handleBlogDrop = (e: React.DragEvent) => {
-        e.preventDefault();
-        const file = e.dataTransfer.files?.[0];
-        if (file) {
-            const url = URL.createObjectURL(file);
-            setBlogImage(url);
-        }
-    };
-
-    const triggerBlogFileInput = () => {
-        blogFileInputRef.current?.click();
-    };
-
-    const [techStack, setTechStack] = useState<string[]>([]); // Default
     const [newTech, setNewTech] = useState('');
 
-    const addTech = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter' && newTech.trim()) {
-            e.preventDefault();
-            if (!techStack.includes(newTech.trim())) {
-                setTechStack([...techStack, newTech.trim()]);
-            }
-            setNewTech('');
-        }
-    };
 
-    const removeTech = (techToRemove: string) => {
-        setTechStack(techStack.filter(tech => tech !== techToRemove));
-    };
 
-    const handlePublish = async (activeTab: string) => {
+    const handlePublish = async (activeTab: 'achievements' | 'portfolio' | 'blog') => {
         setIsSubmitting(true);
-        // Simulate network request
-        await new Promise(resolve => setTimeout(resolve, 1500));
 
-        // Randomly simulate success or error for demonstration
-        const isSuccess = Math.random() > 0.3; // 70% chance of success
+        try {
+            let imageUrl = '';
 
-        if (isSuccess) {
+            // Access specific data safely
+            const currentData = formData[activeTab];
+            const fileToUpload = currentData.file;
+
+            // 1. Upload Image if exists
+            if (fileToUpload) {
+                const fileExt = fileToUpload.name.split('.').pop();
+                const fileName = `${Math.random()}.${fileExt}`;
+                // Use singular names for buckets to match common convention/user setup
+                const bucketName = activeTab === 'portfolio' ? 'portfolio' : activeTab === 'achievements' ? 'achievement' : 'blog';
+                const filePath = `${fileName}`;
+
+                const { error: uploadError } = await supabase.storage
+                    .from(bucketName)
+                    .upload(filePath, fileToUpload);
+
+                if (uploadError) throw uploadError;
+
+                const { data: { publicUrl } } = supabase.storage
+                    .from(bucketName)
+                    .getPublicUrl(filePath);
+
+                imageUrl = publicUrl;
+            } else if (currentData.image) {
+                // Keep existing image URL if not replacing file (if we had edit mode, but for new entries this is mostly just for manual URL entry if allowed, or carry over)
+                // For now, if no file, check if image string exists (though in this form it comes from file upload preview usually)
+                imageUrl = currentData.image;
+            }
+
+            // 2. Insert into Database
+            let error;
+
+            if (activeTab === 'achievements') {
+                const { title, issuer, date, description } = formData.achievements;
+
+                const { error: insertError } = await supabase
+                    .from('achievements')
+                    .insert({
+                        title,
+                        issuer,
+                        date,
+                        description,
+                        image_url: imageUrl,
+                    });
+                error = insertError;
+            } else if (activeTab === 'portfolio') {
+                const { title, description, techStack, githubUrl, liveUrl } = formData.portfolio;
+                const { error: insertError } = await supabase
+                    .from('portfolios')
+                    .insert({
+                        title,
+                        description,
+                        tech_stack: techStack,
+                        github_url: githubUrl,
+                        live_url: liveUrl,
+                        image_url: imageUrl,
+                    });
+                error = insertError;
+            } else if (activeTab === 'blog') {
+                const { title, excerpt, content, isPublished } = formData.blog;
+                // simple slug generation
+                const generatedSlug = title
+                    .toLowerCase()
+                    .trim()
+                    .replace(/[^\w\s-]/g, '')
+                    .replace(/[\s_-]+/g, '-')
+                    .replace(/^-+|-+$/g, '');
+
+                const { error: insertError } = await supabase
+                    .from('blogs')
+                    .insert({
+                        title,
+                        slug: generatedSlug,
+                        excerpt,
+                        content: content,
+                        image_url: imageUrl,
+                        published: isPublished,
+                        updated_at: new Date().toISOString(),
+                    });
+                error = insertError;
+            }
+
+            if (error) throw error;
+
             showToast(
-                'Content Updated',
-                `Your ${activeTab} entry has been ${activeTab === 'blog' && !isPublished ? 'saved as draft' : 'published'}.`,
+                'Content Published',
+                `Your ${activeTab} entry has been successfully saved to Supabase.`,
                 'success'
             );
 
-            // Only increment ID if we are actually publishing, OR if user wants drafts to also increment. 
-            // For now, let's increment ID for any successful "save" action to simulate a new entry being created.
+            // Success: Reset forms
             setCurrentIds(prev => ({
                 ...prev,
-                [activeTab]: prev[activeTab] + 1
+                [activeTab]: prev[activeTab as 'achievements' | 'portfolio' | 'blog'] + 1
             }));
 
-            // Reset last saved for this tab
+            // Reset specific tab data
+            const initialContext = {
+                achievements: { title: '', issuer: '', date: '', description: '', image: null, file: null },
+                portfolio: { title: '', description: '', techStack: [], githubUrl: '', liveUrl: '', image: null, file: null },
+                blog: { title: '', excerpt: '', content: '', image: null, file: null, isPublished: false }
+            };
+
+            setFormData(prev => ({
+                ...prev,
+                [activeTab]: initialContext[activeTab]
+            }));
+
             setLastSaved(prev => ({ ...prev, [activeTab]: null }));
 
-            if (activeTab === 'achievements') setAchievementImage(null);
-            if (activeTab === 'portfolio') {
-                setPortfolioImage(null);
-                setTechStack([]);
-            }
-            if (activeTab === 'blog') {
-                setBlogImage(null);
-                setIsPublished(false);
-                setBlogContent('');
-            }
-        } else {
+        } catch (error: any) {
+            console.error('Error publishing (full object):', error);
+            console.error('Error publishing (JSON):', JSON.stringify(error, null, 2));
+            console.error('Error details:', {
+                message: error.message,
+                code: error.code,
+                details: error.details,
+                hint: error.hint
+            });
+
             showToast(
                 'Publication Failed',
-                'There was an error saving your changes. Please try again.',
+                error.message || 'There was an error saving your changes. Check console for details.',
                 'error'
             );
+        } finally {
+            setIsSubmitting(false);
         }
-        setIsSubmitting(false);
     };
 
     return (
@@ -331,6 +407,12 @@ export default function AdminDashboard() {
                                         className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30"
                                         placeholder={activeTab === 'achievements' ? "e.g., Adobe Certified Expert" : activeTab === 'portfolio' ? "e.g., Silk & Code Brand Identity" : "e.g., The Future of Web Design"}
                                         type="text"
+                                        value={
+                                            activeTab === 'achievements' ? formData.achievements.title :
+                                                activeTab === 'portfolio' ? formData.portfolio.title :
+                                                    formData.blog.title
+                                        }
+                                        onChange={(e) => updateField(activeTab, 'title', e.target.value)}
                                     />
                                 </div>
 
@@ -342,6 +424,8 @@ export default function AdminDashboard() {
                                                 className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30"
                                                 placeholder="e.g., Adobe"
                                                 type="text"
+                                                value={formData.achievements.issuer}
+                                                onChange={(e) => updateField('achievements', 'issuer', e.target.value)}
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -350,6 +434,8 @@ export default function AdminDashboard() {
                                                 className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30"
                                                 placeholder="e.g., 2023-10-15"
                                                 type="date"
+                                                value={formData.achievements.date}
+                                                onChange={(e) => updateField('achievements', 'date', e.target.value)}
                                             />
                                         </div>
                                     </>
@@ -360,20 +446,35 @@ export default function AdminDashboard() {
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold uppercase tracking-wider text-primary/70">GitHub URL</label>
-                                                <input className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30" placeholder="https://github.com/..." type="url" />
+                                                <input
+                                                    className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30"
+                                                    placeholder="https://github.com/..."
+                                                    type="url"
+                                                    value={formData.portfolio.githubUrl}
+                                                    onChange={(e) => updateField('portfolio', 'githubUrl', e.target.value)}
+                                                />
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-xs font-bold uppercase tracking-wider text-primary/70">Live URL <span className="opacity-50 lowercase font-normal">(optional)</span></label>
-                                                <input className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30" placeholder="https://..." type="url" />
+                                                <input
+                                                    className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30"
+                                                    placeholder="https://..."
+                                                    type="url"
+                                                    value={formData.portfolio.liveUrl}
+                                                    onChange={(e) => updateField('portfolio', 'liveUrl', e.target.value)}
+                                                />
                                             </div>
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold uppercase tracking-wider text-primary/70">Tech Stack</label>
                                             <div className="flex flex-wrap gap-2 p-3 bg-white/50 border border-primary/10 rounded-lg min-h-[50px]">
-                                                {techStack.map(tech => (
+                                                {formData.portfolio.techStack.map(tech => (
                                                     <span key={tech} className="bg-primary/10 text-primary text-xs font-bold px-2 py-1 rounded flex items-center gap-1 animate-fadeIn">
-                                                        {tech} <button onClick={() => removeTech(tech)} className="hover:text-red-500"><X size={12} /></button>
+                                                        {tech} <button onClick={() => {
+                                                            const newStack = formData.portfolio.techStack.filter(t => t !== tech);
+                                                            updateField('portfolio', 'techStack', newStack);
+                                                        }} className="hover:text-red-500"><X size={12} /></button>
                                                     </span>
                                                 ))}
                                                 <input
@@ -382,7 +483,16 @@ export default function AdminDashboard() {
                                                     type="text"
                                                     value={newTech}
                                                     onChange={(e) => setNewTech(e.target.value)}
-                                                    onKeyDown={addTech}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' && newTech.trim()) {
+                                                            e.preventDefault();
+                                                            const currentStack = formData.portfolio.techStack;
+                                                            if (!currentStack.includes(newTech.trim())) {
+                                                                updateField('portfolio', 'techStack', [...currentStack, newTech.trim()]);
+                                                            }
+                                                            setNewTech('');
+                                                        }
+                                                    }}
                                                 />
                                             </div>
                                         </div>
@@ -393,18 +503,24 @@ export default function AdminDashboard() {
                                     <>
                                         <div className="space-y-2">
                                             <label className="text-xs font-bold uppercase tracking-wider text-primary/70">Excerpt</label>
-                                            <textarea className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30 resize-none custom-scrollbar" placeholder="Short preview for the card..." rows={3}></textarea>
+                                            <textarea
+                                                className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30 resize-none custom-scrollbar"
+                                                placeholder="Short preview for the card..."
+                                                rows={3}
+                                                value={formData.blog.excerpt}
+                                                onChange={(e) => updateField('blog', 'excerpt', e.target.value)}
+                                            ></textarea>
                                         </div>
 
                                         <div className="flex items-center gap-3 p-4 border border-primary/10 rounded-lg bg-white/30">
                                             <div
-                                                className={clsx("w-10 h-6 rounded-full relative transition-colors cursor-pointer", isPublished ? "bg-primary" : "bg-primary/20")}
-                                                onClick={() => setIsPublished(!isPublished)}
+                                                className={clsx("w-10 h-6 rounded-full relative transition-colors cursor-pointer", formData.blog.isPublished ? "bg-primary" : "bg-primary/20")}
+                                                onClick={() => updateField('blog', 'isPublished', !formData.blog.isPublished)}
                                             >
-                                                <div className={clsx("absolute top-1 left-1 size-4 bg-white rounded-full transition-transform shadow-sm", isPublished ? "translate-x-4" : "translate-x-0")}></div>
+                                                <div className={clsx("absolute top-1 left-1 size-4 bg-white rounded-full transition-transform shadow-sm", formData.blog.isPublished ? "translate-x-4" : "translate-x-0")}></div>
                                             </div>
-                                            <label className="text-sm font-bold text-primary cursor-pointer select-none" onClick={() => setIsPublished(!isPublished)}>
-                                                {isPublished ? 'Status: Published' : 'Status: Draft'}
+                                            <label className="text-sm font-bold text-primary cursor-pointer select-none" onClick={() => updateField('blog', 'isPublished', !formData.blog.isPublished)}>
+                                                {formData.blog.isPublished ? 'Status: Published' : 'Status: Draft'}
                                             </label>
                                         </div>
                                     </>
@@ -415,8 +531,8 @@ export default function AdminDashboard() {
                                 </label>
                                 {activeTab === 'blog' ? (
                                     <MarkdownEditor
-                                        value={blogContent}
-                                        onChange={setBlogContent}
+                                        value={formData.blog.content}
+                                        onChange={(val) => updateField('blog', 'content', val)}
                                         placeholder="# Write your story here..."
                                     />
                                 ) : (
@@ -424,6 +540,8 @@ export default function AdminDashboard() {
                                         className="w-full bg-white/50 border border-primary/10 rounded-lg px-4 py-3 focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all placeholder:text-primary/30 resize-none custom-scrollbar"
                                         placeholder="Tell the story..."
                                         rows={5}
+                                        value={activeTab === 'achievements' ? formData.achievements.description : formData.portfolio.description}
+                                        onChange={(e) => updateField(activeTab, 'description', e.target.value)}
                                     ></textarea>
                                 )}
                             </div>
@@ -437,19 +555,19 @@ export default function AdminDashboard() {
 
                                     {activeTab === 'achievements' ? (
                                         <div
-                                            onDrop={handleDrop}
+                                            onDrop={(e) => handleDrop(e, 'achievements')}
                                             onDragOver={handleDragOver}
-                                            onClick={triggerFileInput}
+                                            onClick={() => triggerFileInput(fileInputRef)}
                                             className={clsx(
                                                 "flex-1 border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-8 transition-all cursor-pointer group relative overflow-hidden",
-                                                achievementImage ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
+                                                formData.achievements.image ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
                                             )}
                                         >
-                                            <input type="file" ref={fileInputRef} className="hidden" onChange={handleImageUpload} accept="image/*" />
-                                            {achievementImage ? (
+                                            <input type="file" ref={fileInputRef} className="hidden" onChange={(e) => handleImageUpload(e, 'achievements')} accept="image/*" />
+                                            {formData.achievements.image ? (
                                                 <div className="absolute inset-0 w-full h-full group-hover:opacity-90 transition-opacity">
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src={achievementImage} alt="Preview" className="w-full h-full object-cover" />
+                                                    <img src={formData.achievements.image} alt="Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <p className="text-white font-bold text-sm">Click or Drop to Replace</p>
                                                     </div>
@@ -466,19 +584,19 @@ export default function AdminDashboard() {
                                         </div>
                                     ) : activeTab === 'portfolio' ? (
                                         <div
-                                            onDrop={handlePortfolioDrop}
+                                            onDrop={(e) => handleDrop(e, 'portfolio')}
                                             onDragOver={handleDragOver}
-                                            onClick={triggerPortfolioFileInput}
+                                            onClick={() => triggerFileInput(portfolioFileInputRef)}
                                             className={clsx(
                                                 "flex-1 border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-8 transition-all cursor-pointer group relative overflow-hidden",
-                                                portfolioImage ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
+                                                formData.portfolio.image ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
                                             )}
                                         >
-                                            <input type="file" ref={portfolioFileInputRef} className="hidden" onChange={handlePortfolioImageUpload} accept="image/*" />
-                                            {portfolioImage ? (
+                                            <input type="file" ref={portfolioFileInputRef} className="hidden" onChange={(e) => handleImageUpload(e, 'portfolio')} accept="image/*" />
+                                            {formData.portfolio.image ? (
                                                 <div className="absolute inset-0 w-full h-full group-hover:opacity-90 transition-opacity">
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src={portfolioImage} alt="Preview" className="w-full h-full object-cover" />
+                                                    <img src={formData.portfolio.image} alt="Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <p className="text-white font-bold text-sm">Click or Drop to Replace</p>
                                                     </div>
@@ -496,19 +614,19 @@ export default function AdminDashboard() {
                                     ) : (
                                         // Blog Image Upload
                                         <div
-                                            onDrop={handleBlogDrop}
+                                            onDrop={(e) => handleDrop(e, 'blog')}
                                             onDragOver={handleDragOver}
-                                            onClick={triggerBlogFileInput}
+                                            onClick={() => triggerFileInput(blogFileInputRef)}
                                             className={clsx(
                                                 "flex-1 border-2 border-dashed rounded-xl flex flex-col items-center justify-center p-8 transition-all cursor-pointer group relative overflow-hidden",
-                                                blogImage ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
+                                                formData.blog.image ? "border-primary/0 bg-white/0" : "border-primary/20 bg-white/30 hover:bg-white/50"
                                             )}
                                         >
-                                            <input type="file" ref={blogFileInputRef} className="hidden" onChange={handleBlogImageUpload} accept="image/*" />
-                                            {blogImage ? (
+                                            <input type="file" ref={blogFileInputRef} className="hidden" onChange={(e) => handleImageUpload(e, 'blog')} accept="image/*" />
+                                            {formData.blog.image ? (
                                                 <div className="absolute inset-0 w-full h-full group-hover:opacity-90 transition-opacity">
                                                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                                                    <img src={blogImage} alt="Preview" className="w-full h-full object-cover" />
+                                                    <img src={formData.blog.image} alt="Preview" className="w-full h-full object-cover" />
                                                     <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                                                         <p className="text-white font-bold text-sm">Click or Drop to Replace</p>
                                                     </div>
@@ -546,7 +664,7 @@ export default function AdminDashboard() {
                                     disabled={isSubmitting}
                                     className="px-8 py-2.5 bg-primary text-white rounded-lg font-bold shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-[0.98] transition-all text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                                 >
-                                    {isSubmitting ? 'Saving...' : (activeTab === 'blog' && !isPublished ? 'Save as Draft' : 'Publish')}
+                                    {isSubmitting ? 'Saving...' : (activeTab === 'blog' && !formData.blog.isPublished ? 'Save as Draft' : 'Publish')}
                                 </button>
                             </div>
                         </div>
