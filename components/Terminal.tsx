@@ -35,11 +35,13 @@ export default function Terminal() {
                         options={{
                             delay: 50,
                             cursor: '█',
-                            loop: false,
+                            loop: true,
                         }}
                         onInit={(typewriter) => {
                             typewriter
                                 .typeString(codeString)
+                                .pauseFor(5000)
+                                .deleteAll()
                                 .start();
                         }}
                     />

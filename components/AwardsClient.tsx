@@ -20,7 +20,7 @@ export default function AwardsClient({ achievements }: { achievements: Achieveme
     const isSlider = achievements.length > 3;
 
     return (
-        <section className="mb-32" id="awards">
+        <section className="mb-32" id="achievements">
             <h2 className="font-serif text-3xl font-bold mb-12 flex items-center gap-4">
                 <span className="h-px w-12 bg-primary/20"></span>
                 Key Achievements
