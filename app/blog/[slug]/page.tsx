@@ -181,18 +181,6 @@ export default async function BlogPostPage({ params }: PageProps) {
                                 <ArrowLeft size={20} />
                                 <span>Back to Portfolio</span>
                             </Link>
-
-                            {/* "Next Article" could be dynamic, but for now linking to blog section or just a placeholder if we don't fetch next */}
-                            <div className="flex flex-col items-center md:items-end text-center md:text-right max-w-xs opacity-50">
-                                <span className="text-xs font-bold uppercase tracking-widest text-accent-dark mb-2">More Reading</span>
-                                <Link href="/#blog" className="font-serif text-xl font-bold hover:text-accent-dark transition-colors leading-tight">
-                                    Explore Technical Journal
-                                </Link>
-                            </div>
-                        </div>
-
-                        <div className="mt-24 text-center text-sm text-primary/40 font-medium">
-                            <p>© {new Date().getFullYear()} Mutiara Sekar Kinasih. Crafted with focus and passion.</p>
                         </div>
                     </footer>
                 </article>
