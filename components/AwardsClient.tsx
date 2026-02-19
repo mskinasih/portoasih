@@ -72,25 +72,25 @@ export default function AwardsClient({ achievements }: { achievements: Achieveme
                     onClick={() => setSelectedAchievement(null)}
                 >
                     <div
-                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300"
+                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-4xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300 h-[80vh] md:h-auto md:max-h-[85vh] m-4"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
                             onClick={() => setSelectedAchievement(null)}
-                            className="absolute top-4 right-4 z-10 p-2 bg-white/50 hover:bg-white rounded-full transition-colors"
+                            className="absolute top-4 right-4 z-20 p-2 bg-white/50 hover:bg-white rounded-full transition-colors shadow-sm"
                         >
                             <X size={20} className="text-primary" />
                         </button>
 
-                        {/* Left: Image (Flexible for 3:4 and 4:3) */}
-                        <div className="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-4">
-                            <div className="relative w-full h-full min-h-[300px] md:min-h-0 flex items-center justify-center">
+                        {/* Left: Image (Mobile: Top) */}
+                        <div className="w-full md:w-1/2 bg-gray-50 flex items-center justify-center p-4 md:p-8 shrink-0 h-[35%] md:h-auto relative">
+                            <div className="relative w-full h-full flex items-center justify-center">
                                 {selectedAchievement.image_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={selectedAchievement.image_url}
                                         alt={selectedAchievement.title}
-                                        className="max-w-full max-h-[70vh] md:max-h-full object-contain shadow-sm rounded-sm"
+                                        className="w-full h-full object-contain shadow-lg rounded-lg"
                                     />
                                 ) : (
                                     <div className="text-primary/20">
@@ -100,27 +100,22 @@ export default function AwardsClient({ achievements }: { achievements: Achieveme
                             </div>
                         </div>
 
-                        {/* Right: Content */}
-                        <div className="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center bg-white/50">
-                            <div className="mb-6">
-                                <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-3 leading-tight">
+                        {/* Right: Content (Mobile: Bottom) */}
+                        <div className="w-full md:w-1/2 p-6 md:p-10 flex flex-col bg-white/60 overflow-y-auto h-[65%] md:h-auto">
+                            <div>
+                                <span className="inline-block px-3 py-1 rounded-full bg-accent-light/10 text-accent-dark text-xs font-bold uppercase tracking-widest mb-4">
+                                    {selectedAchievement.issuer}
+                                </span>
+                                <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-2 leading-tight">
                                     {selectedAchievement.title}
                                 </h3>
-                                <div className="flex items-center gap-2 text-sm text-primary/80">
-                                    <span className="font-light italic opacity-70">Issued by</span>
-                                    <span className="font-bold uppercase tracking-wide border-b border-primary/10 pb-0.5">{selectedAchievement.issuer}</span>
-                                </div>
-                            </div>
-
-                            <div className="prose prose-sm text-primary/70 mb-8 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                                <p className="whitespace-pre-wrap leading-relaxed">{selectedAchievement.description}</p>
-                            </div>
-
-                            <div className="mt-auto pt-6 border-t border-primary/5 flex items-center text-primary/40 text-xs font-mono uppercase tracking-widest gap-2">
-                                <Calendar size={14} />
-                                <span>
+                                <p className="text-sm font-mono text-primary/50 mb-6">
                                     {new Date(selectedAchievement.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                                </span>
+                                </p>
+                            </div>
+
+                            <div className="prose prose-sm text-primary/80 mb-6 flex-grow custom-scrollbar">
+                                <p className="leading-relaxed whitespace-pre-wrap">{selectedAchievement.description}</p>
                             </div>
                         </div>
                     </div>

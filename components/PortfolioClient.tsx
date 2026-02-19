@@ -148,7 +148,7 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                     onClick={() => setSelectedProject(null)}
                 >
                     <div
-                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-5xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300 max-h-[90vh] md:max-h-[85vh] m-4"
+                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-5xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300 h-[85vh] md:h-auto md:max-h-[85vh] m-4"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
@@ -158,15 +158,15 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                             <ChevronLeft className="rotate-45" size={20} />
                         </button>
 
-                        {/* Left: Image */}
-                        <div className="w-full md:w-3/5 bg-gray-50 flex items-center justify-center p-4 md:p-8 shrink-0">
-                            <div className="relative w-full h-full min-h-[300px] flex items-center justify-center">
+                        {/* Left: Image (Mobile: Top) */}
+                        <div className="w-full md:w-3/5 bg-gray-50 flex items-center justify-center p-4 md:p-8 shrink-0 h-[30%] md:h-auto relative">
+                            <div className="relative w-full h-full flex items-center justify-center">
                                 {selectedProject.image_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={selectedProject.image_url}
                                         alt={selectedProject.title}
-                                        className="max-w-full max-h-[70vh] object-contain shadow-lg rounded-lg"
+                                        className="w-full h-full object-contain shadow-lg rounded-lg"
                                     />
                                 ) : (
                                     <div className="text-primary/20">
@@ -176,9 +176,9 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                             </div>
                         </div>
 
-                        {/* Right: Content */}
-                        <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col bg-white/60 overflow-y-auto">
-                            <h3 className="font-serif text-3xl font-bold text-primary mb-4 leading-tight">
+                        {/* Right: Content (Mobile: Bottom) */}
+                        <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col bg-white/60 overflow-y-auto h-[70%] md:h-auto">
+                            <h3 className="font-serif text-2xl md:text-3xl font-bold text-primary mb-4 leading-tight">
                                 {selectedProject.title}
                             </h3>
 
@@ -194,7 +194,7 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                                 <p className="whitespace-pre-wrap leading-relaxed">{selectedProject.description}</p>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4 mt-auto pt-6 border-t border-primary/5">
+                            <div className="grid grid-cols-2 gap-4 mt-auto pt-6 border-t border-primary/5 shrink-0">
                                 {selectedProject.live_url && (
                                     <Link
                                         href={selectedProject.live_url}
