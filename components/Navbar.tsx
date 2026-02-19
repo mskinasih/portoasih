@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { User, Award, Briefcase, FileText, Mail } from 'lucide-react';
 
 export default function Navbar() {
     const [isVisible, setIsVisible] = useState(false);
@@ -46,36 +47,46 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: 'About', href: '#about' },
-        { name: 'Achievements', href: '#achievements' },
-        { name: 'Portfolio', href: '#portfolio' },
-        { name: 'Blog', href: '#blog' },
-        { name: 'Contact', href: '#contact' },
+        { name: 'About', href: '#about', icon: User },
+        { name: 'Achievements', href: '#achievements', icon: Award },
+        { name: 'Portfolio', href: '#portfolio', icon: Briefcase },
+        { name: 'Blog', href: '#blog', icon: FileText },
+        { name: 'Contact', href: '#contact', icon: Mail },
     ];
 
     return (
         <nav className={cn(
-            "fixed top-0 left-0 right-0 z-50 flex justify-center py-6 px-4 transition-all duration-500",
-            isVisible ? "opacity-100 translate-y-0" : "opacity-0 -translate-y-full pointer-events-none"
+            "fixed z-50 flex justify-center px-4 transition-all duration-500 left-0 right-0",
+            // Mobile: Bottom-6, Desktop: Top-6
+            "bottom-6 md:top-6 md:bottom-auto",
+            isVisible ? "opacity-100 translate-y-0" : "opacity-0 pointer-events-none translate-y-10 md:-translate-y-full"
         )}>
-            <div className="backdrop-blur-md bg-white/80 dark:bg-black/50 rounded-full px-8 py-3 flex items-center gap-8 border border-primary/5 shadow-sm">
-                {navLinks.map((link) => (
-                    <a
-                        key={link.name}
-                        href={link.href}
-                        className={cn(
-                            "text-xs font-bold uppercase tracking-widest transition-all duration-300 relative",
-                            activeSection === link.href.substring(1)
-                                ? "text-accent-dark scale-105"
-                                : "text-primary/60 hover:text-primary"
-                        )}
-                    >
-                        {link.name}
-                        {activeSection === link.href.substring(1) && (
-                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-accent-dark rounded-full"></span>
-                        )}
-                    </a>
-                ))}
+            <div className="backdrop-blur-md bg-white/80 dark:bg-black/50 rounded-full px-6 py-3 md:px-8 flex items-center justify-between md:justify-center md:gap-8 border border-primary/5 shadow-sm min-w-[300px] md:min-w-0 max-w-[90vw] overflow-hidden">
+                {navLinks.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            className={cn(
+                                "text-[10px] md:text-xs font-bold uppercase tracking-widest transition-all duration-300 relative whitespace-nowrap flex items-center justify-center p-2",
+                                activeSection === link.href.substring(1)
+                                    ? "text-accent-dark scale-110"
+                                    : "text-primary/60 hover:text-primary"
+                            )}
+                            aria-label={link.name}
+                        >
+                            <span className="md:hidden">
+                                <Icon size={20} strokeWidth={2.5} />
+                            </span>
+                            <span className="hidden md:inline">{link.name}</span>
+
+                            {activeSection === link.href.substring(1) && (
+                                <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 bg-accent-dark rounded-full"></span>
+                            )}
+                        </a>
+                    );
+                })}
             </div>
         </nav>
     );

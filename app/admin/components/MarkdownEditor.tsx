@@ -22,9 +22,10 @@ interface MarkdownEditorProps {
     placeholder?: string;
     className?: string;
     rows?: number;
+    onImageUpload?: (file: File) => Promise<string>;
 }
 
-export default function MarkdownEditor({ value, onChange, placeholder, className, rows = 12 }: MarkdownEditorProps) {
+export default function MarkdownEditor({ value, onChange, placeholder, className, rows = 12, onImageUpload }: MarkdownEditorProps) {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
     const [isPreview, setIsPreview] = useState(false);
 
@@ -55,11 +56,24 @@ export default function MarkdownEditor({ value, onChange, placeholder, className
         fileInputRef.current?.click();
     };
 
-    const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const url = URL.createObjectURL(file);
-            insertSyntax(`![Image description](${url})`);
+            if (onImageUpload) {
+                try {
+                    // Show a loading placeholder or just wait
+                    // For better UX, we could insert a placeholder then replace, but for now we wait
+                    const url = await onImageUpload(file);
+                    insertSyntax(`![Image description](${url})`);
+                } catch (error) {
+                    console.error("Image upload failed", error);
+                    alert("Image upload failed");
+                }
+            } else {
+                // Fallback to blob if no uploader provided
+                const url = URL.createObjectURL(file);
+                insertSyntax(`![Image description](${url})`);
+            }
         }
         // Reset input so same file can be selected again if needed
         if (fileInputRef.current) {

@@ -17,7 +17,7 @@ interface PortfolioItem {
 
 export default function PortfolioClient({ projects }: { projects: PortfolioItem[] }) {
     const [currentIndex, setCurrentIndex] = useState(0);
-    const [itemsPerView, setItemsPerView] = useState(3);
+    const [itemsPerView, setItemsPerView] = useState(1); // Default to 1 (Mobile First) to prevent hydration mismatch
     const [selectedProject, setSelectedProject] = useState<PortfolioItem | null>(null);
 
     // Update itemsPerView based on window width
@@ -148,18 +148,18 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                     onClick={() => setSelectedProject(null)}
                 >
                     <div
-                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-5xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300 max-h-[90vh]"
+                        className="bg-white/90 backdrop-blur-xl border border-white/20 shadow-2xl rounded-2xl max-w-5xl w-full overflow-hidden flex flex-col md:flex-row relative animate-in fade-in zoom-in-95 duration-300 max-h-[90vh] md:max-h-[85vh] m-4"
                         onClick={(e) => e.stopPropagation()}
                     >
                         <button
                             onClick={() => setSelectedProject(null)}
-                            className="absolute top-4 right-4 z-10 p-2 bg-white/50 hover:bg-white rounded-full transition-colors shadow-sm"
+                            className="absolute top-4 right-4 z-20 p-2 bg-white/50 hover:bg-white rounded-full transition-colors shadow-sm"
                         >
                             <ChevronLeft className="rotate-45" size={20} />
                         </button>
 
                         {/* Left: Image */}
-                        <div className="w-full md:w-3/5 bg-gray-50 flex items-center justify-center p-4 md:p-8">
+                        <div className="w-full md:w-3/5 bg-gray-50 flex items-center justify-center p-4 md:p-8 shrink-0">
                             <div className="relative w-full h-full min-h-[300px] flex items-center justify-center">
                                 {selectedProject.image_url ? (
                                     // eslint-disable-next-line @next/next/no-img-element
@@ -177,7 +177,7 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                         </div>
 
                         {/* Right: Content */}
-                        <div className="w-full md:w-2/5 p-8 flex flex-col bg-white/60 overflow-y-auto">
+                        <div className="w-full md:w-2/5 p-6 md:p-8 flex flex-col bg-white/60 overflow-y-auto">
                             <h3 className="font-serif text-3xl font-bold text-primary mb-4 leading-tight">
                                 {selectedProject.title}
                             </h3>

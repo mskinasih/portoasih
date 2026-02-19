@@ -11,7 +11,7 @@ export default function Home() {
   return (
     <div className="bg-background-light min-h-screen text-primary selection:bg-accent-light/30 font-display">
       <Navbar />
-      <main className="max-w-5xl mx-auto px-6 lg:px-12 pb-24">
+      <main className="max-w-5xl mx-auto px-4 md:px-6 lg:px-12 pb-24">
         {/* Helper div to push content down for fixed navbar if needed, or rely on Hero padding */}
         <Hero />
         <About />

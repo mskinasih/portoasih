@@ -4,7 +4,7 @@ import { Camera } from 'lucide-react';
 
 export default function Contact() {
     return (
-        <section className="relative overflow-hidden bg-primary text-background-light rounded-2xl p-12 md:p-20 shadow-2xl" id="contact">
+        <section className="relative overflow-hidden bg-primary text-background-light rounded-2xl p-8 md:p-20 shadow-2xl" id="contact">
             {/* Lily Watermark */}
             <svg
                 className="absolute -bottom-12 -right-5 w-[400px] h-[400px] opacity-5 text-accent-dark pointer-events-none z-0"
