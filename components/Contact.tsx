@@ -1,6 +1,6 @@
 'use client';
 
-import { Camera } from 'lucide-react';
+import { Mail, Linkedin, Github, Instagram } from 'lucide-react';
 
 export default function Contact() {
     return (
@@ -28,22 +28,20 @@ export default function Contact() {
                 </div>
                 <div className="md:col-span-6 flex flex-col gap-4">
                     <a className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors" href="mailto:mtiaraskinasih@gmail.com">
-                        <span className="font-bold">Email</span>
+                        <Mail className="w-5 h-5" />
                         <span className="text-sm opacity-60">mtiaraskinasih@gmail.com</span>
                     </a>
                     <a className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors" href="https://www.linkedin.com/in/mskinasih/">
-                        <span className="font-bold">LinkedIn</span>
+                        <Linkedin className="w-5 h-5" />
                         <span className="text-sm opacity-60">in/mskinasih</span>
                     </a>
                     <a className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors" href="https://github.com/portoasih">
-                        <span className="font-bold">GitHub</span>
+                        <Github className="w-5 h-5" />
                         <span className="text-sm opacity-60">@portoasih</span>
                     </a>
                     <a className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors" href="https://www.instagram.com/mskinasih">
-                        <span className="font-bold">Instagram</span>
-                        <span className="text-sm opacity-60 flex items-center gap-2">
-                            @mskinasih
-                        </span>
+                        <Instagram className="w-5 h-5" />
+                        <span className="text-sm opacity-60">@mskinasih</span>
                     </a>
                 </div>
             </div>

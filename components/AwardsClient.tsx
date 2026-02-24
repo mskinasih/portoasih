@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { clsx } from 'clsx';
 import { X, Calendar, Award } from 'lucide-react';
 
@@ -14,55 +14,112 @@ interface Achievement {
 }
 
 export default function AwardsClient({ achievements }: { achievements: Achievement[] }) {
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [itemsPerView, setItemsPerView] = useState(1);
     const [selectedAchievement, setSelectedAchievement] = useState<Achievement | null>(null);
 
-    // Logic: If data length > 3, use slider. Otherwise, use grid.
-    const isSlider = achievements.length > 3;
+    // Responsive itemsPerView
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setItemsPerView(1);
+            } else if (window.innerWidth < 1024) {
+                setItemsPerView(2);
+            } else {
+                setItemsPerView(3); // Desktop grid-like behavior
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    const maxIndex = Math.max(0, achievements.length - itemsPerView);
+
+    const nextSlide = () => {
+        if (currentIndex < maxIndex) {
+            setCurrentIndex(prev => prev + 1);
+        }
+    };
+
+    const prevSlide = () => {
+        if (currentIndex > 0) {
+            setCurrentIndex(prev => prev - 1);
+        }
+    };
 
     return (
         <section className="mb-32" id="achievements">
-            <h2 className="font-serif text-3xl font-bold mb-12 flex items-center gap-4">
-                <span className="h-px w-12 bg-primary/20"></span>
-                Key Achievements
-            </h2>
+            <div className="flex items-center justify-between mb-12">
+                <h2 className="font-serif text-3xl font-bold flex items-center gap-4">
+                    <span className="h-px w-9 bg-primary/20"></span>
+                    Honors & Awards
+                </h2>
 
-            <div className={clsx(
-                "gap-6",
-                isSlider
-                    ? "flex overflow-x-auto snap-x snap-mandatory pb-6 -mx-6 px-6 md:mx-0 md:px-0 scrollbar-hide"
-                    : "grid grid-cols-1 md:grid-cols-3"
-            )}>
-                {achievements.map((item: Achievement, index: number) => (
-                    <div
-                        key={item.id || index}
-                        onClick={() => setSelectedAchievement(item)}
-                        className={clsx(
-                            "group border border-primary/5 rounded-xl bg-white/30 hover:shadow-lg transition-all overflow-hidden flex flex-col cursor-pointer hover:scale-[1.02] active:scale-[0.98]",
-                            isSlider && "flex-none w-[85vw] md:w-[350px] snap-center"
-                        )}
-                    >
-                        <div className="aspect-video w-full bg-accent-dark/5 overflow-hidden flex items-center justify-center text-accent-dark/20 bg-gray-100 relative">
-                            {item.image_url ? (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                    src={item.image_url}
-                                    alt={item.title}
-                                    className="w-full h-full object-cover transition-all duration-500"
-                                />
-                            ) : (
-                                <span className="text-xs font-mono">No Image</span>
-                            )}
-                        </div>
-                        <div className="p-6">
-                            <h4 className="font-bold text-sm mb-1">{item.title}</h4>
-                            <p className="text-[10px] uppercase tracking-wider text-accent-dark font-bold mb-3">{item.issuer}</p>
-                            <p className="text-xs opacity-60 line-clamp-3">{item.description}</p>
-                            <p className="text-[10px] mt-4 opacity-40 font-mono">
-                                {new Date(item.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
-                            </p>
-                        </div>
+                {achievements.length > itemsPerView && (
+                    <div className="flex gap-4">
+                        <button
+                            onClick={prevSlide}
+                            disabled={currentIndex === 0}
+                            className="p-3 border border-primary/10 rounded-full hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Previous achievement"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6" /></svg>
+                        </button>
+                        <button
+                            onClick={nextSlide}
+                            disabled={currentIndex >= maxIndex}
+                            className="p-3 border border-primary/10 rounded-full hover:bg-primary/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                            aria-label="Next achievement"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6" /></svg>
+                        </button>
                     </div>
-                ))}
+                )}
+            </div>
+
+            <div className="overflow-hidden">
+                <div
+                    className="flex transition-transform duration-500 ease-out"
+                    style={{ transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)` }}
+                >
+                    {achievements.map((item: Achievement, index: number) => (
+                        <div
+                            key={item.id || index}
+                            className="flex-shrink-0 px-4 box-border"
+                            style={{ width: `${100 / itemsPerView}%` }}
+                        >
+                            <div
+                                onClick={() => setSelectedAchievement(item)}
+                                className={clsx(
+                                    "group border border-primary/5 rounded-xl bg-white/30 hover:shadow-lg transition-all overflow-hidden flex flex-col cursor-pointer hover:scale-[1.02] active:scale-[0.98] h-full"
+                                )}
+                            >
+                                <div className="aspect-video w-full bg-accent-dark/5 overflow-hidden flex items-center justify-center text-accent-dark/20 bg-gray-100 relative">
+                                    {item.image_url ? (
+                                        // eslint-disable-next-line @next/next/no-img-element
+                                        <img
+                                            src={item.image_url}
+                                            alt={item.title}
+                                            className="w-full h-full object-cover transition-all duration-500"
+                                        />
+                                    ) : (
+                                        <span className="text-xs font-mono">No Image</span>
+                                    )}
+                                </div>
+                                <div className="p-6 flex-grow flex flex-col">
+                                    <h4 className="font-bold text-sm mb-1">{item.title}</h4>
+                                    <p className="text-[10px] uppercase tracking-wider text-accent-dark font-bold mb-3">{item.issuer}</p>
+                                    <p className="text-xs opacity-60 line-clamp-3 mb-4">{item.description}</p>
+                                    <p className="text-[10px] mt-auto opacity-40 font-mono">
+                                        {new Date(item.date).toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
             </div>
 
             {/* Modal */}

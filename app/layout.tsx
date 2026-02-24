@@ -25,7 +25,7 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Mutiara Sekar Kinasih - Portfolio",
+  title: "Mutiara's Portfolio",
   description: "Junior Full-Stack Developer specializing in Web Development and Data Analysis",
 };
 
