@@ -7,6 +7,7 @@ import Markdown from 'react-markdown';
 import { Metadata } from 'next';
 import { clsx } from 'clsx';
 import { ArrowLeft, Calendar, Clock, Share2, Bookmark, MessageCircle } from 'lucide-react';
+import ZoomableImage from '@/components/ZoomableImage';
 
 /* 
   Re-implementing the user's provided HTML design using Next.js and Tailwind.
@@ -124,14 +125,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
                     {/* Featured Image */}
                     {blogPost.image_url && (
-                        <div className="mb-16 rounded-xl overflow-hidden shadow-2xl shadow-primary/10 relative aspect-[16/9] w-full">
-                            {/* Using standard img tag as requested to match components/Blog.tsx behavior and avoid config restart issues */}
-                            <img
-                                src={blogPost.image_url}
-                                alt={blogPost.title}
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
+                        <ZoomableImage src={blogPost.image_url} alt={blogPost.title} isFeatured={true} />
                     )}
 
                     {/* Article Body */}
@@ -146,7 +140,14 @@ export default async function BlogPostPage({ params }: PageProps) {
                             components={{
                                 // Override generic elements to match the design system
                                 h2: ({ node, ...props }) => <h2 className="font-serif text-3xl font-bold pt-6 text-primary" {...props} />,
-                                p: ({ node, ...props }) => <p className="text-lg leading-relaxed text-primary/90 mb-6 text-justify" {...props} />,
+                                p: (props: any) => {
+                                    const { node, children, ...rest } = props;
+                                    const hasImage = node?.children?.some((n: any) => n.tagName === 'img');
+                                    if (hasImage) {
+                                        return <div className="text-lg leading-relaxed text-primary/90 mb-6 text-justify" {...rest}>{children}</div>;
+                                    }
+                                    return <p className="text-lg leading-relaxed text-primary/90 mb-6 text-justify" {...rest}>{children}</p>;
+                                },
                                 blockquote: ({ node, ...props }) => (
                                     <blockquote className="border-l-4 border-accent-dark pl-8 py-4 my-12 italic" {...props}>
                                         <div className="font-serif text-2xl text-accent-dark leading-relaxed">
@@ -167,6 +168,9 @@ export default async function BlogPostPage({ params }: PageProps) {
                                             <pre className="mono-text text-sm leading-relaxed text-primary/80 bg-transparent p-0 m-0 border-none" {...props} />
                                         </div>
                                     </div>
+                                ),
+                                img: ({ node, ...props }) => (
+                                    <ZoomableImage src={props.src as string || ''} alt={props.alt as string || ''} />
                                 )
                             }}
                         >
