@@ -113,7 +113,7 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
 
                                 <div className="p-6 flex-grow flex flex-col">
                                     <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">{project.title}</h3>
-                                    <p className="text-sm opacity-80 mb-4 font-light flex-grow line-clamp-3">{project.description}</p>
+                                    <p className="text-sm opacity-80 mb-4 font-light line-clamp-3">{project.description}</p>
 
                                     <div className="flex flex-wrap gap-3 mb-6">
                                         {project.tech_stack?.map((tech, i) => (
