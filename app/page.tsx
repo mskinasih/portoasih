@@ -22,7 +22,7 @@ export default function Home() {
         <Contact />
 
         <footer className="mt-20 text-center text-[10px] uppercase tracking-widest font-bold opacity-30">
-          © 2026 - portoasih
+          © 2026 - mskinasih
         </footer>
       </main>
     </div>

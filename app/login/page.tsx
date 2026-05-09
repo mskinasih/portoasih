@@ -138,7 +138,7 @@ export default function LoginPage() {
 
             {/* Footer Meta */}
             <footer className="p-8 text-center text-primary/40 text-[10px] uppercase tracking-[0.2em] font-medium">
-                © 2026 - Portoasih
+                © 2026 - mskinasih
             </footer>
         </div>
     );

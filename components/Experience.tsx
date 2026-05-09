@@ -14,7 +14,7 @@ export default function Experience() {
                     <div className="space-y-12 border-l border-primary/10 pl-8 relative">
                         <div className="relative">
                             <div className="absolute -left-[37px] top-1.5 w-4 h-4 rounded-full border-2 border-primary bg-background-light"></div>
-                            <span className="text-[10px] uppercase tracking-widest font-bold text-accent-dark/60 mb-1 block">2025 – Present</span>
+                            <span className="text-[10px] uppercase tracking-widest font-bold text-accent-dark/60 mb-1 block">2025 – 2026</span>
                             <h4 className="text-md font-bold">Full-Stack Developer Intern</h4>
                             <span className="text-xs font-semibold text-accent-dark/80 block mb-1">PT Aksa Digital Group</span>
                             <p className="text-sm opacity-70">Developing and maintaining web applications, building RESTful APIs, and managing relational databases.</p>

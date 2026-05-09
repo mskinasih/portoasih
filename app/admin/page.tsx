@@ -274,7 +274,7 @@ export default function AdminDashboard() {
                 }
 
                 // 1. Upload PDF
-                const fileName = 'CV_Mutiara Sekar Kinasih.pdf';
+                const fileName = 'cv_mskinasih.pdf';
                 const { error: uploadError } = await supabase.storage
                     .from('resumes')
                     .upload(fileName, cvFile, {
