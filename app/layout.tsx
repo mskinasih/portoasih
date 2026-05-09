@@ -25,8 +25,8 @@ const playfairDisplay = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Mutiara's Portfolio",
-  description: "Junior Full-Stack Developer specializing in Web Development and Data Analysis",
+  title: "Portofolio Mutiara",
+  description: "Junior Full-Stack Developer dengan spesialisasi Pengembangan Web dan Analisis Data",
 };
 
 export default function RootLayout({
@@ -35,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="id">
       <body className={`${laBelleAurore.variable} ${manrope.variable} ${jetbrainsMono.variable} ${playfairDisplay.variable}`}>
         {children}
       </body>
