@@ -60,7 +60,7 @@ export default function BlogClient({ posts }: { posts: BlogPost[] }) {
             <div className="flex items-center justify-between mb-12">
                 <h2 className="font-serif text-3xl font-bold flex items-center gap-4">
                     <span className="h-px w-12 bg-primary/20"></span>
-                    Technical Journal
+                    Jurnal Mutiara
                 </h2>
 
                 {/* Navigation Controls only if we have more posts than view */}

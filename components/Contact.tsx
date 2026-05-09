@@ -23,8 +23,8 @@ export default function Contact() {
 
             <div className="relative z-10 grid grid-cols-1 md:grid-cols-12 gap-12">
                 <div className="md:col-span-6">
-                    <h2 className="font-serif text-4xl font-bold mb-6">Let's build something thoughtful.</h2>
-                    <p className="text-lg opacity-80 font-light mb-8">Currently available for select freelance inquiries and collaborative research projects.</p>
+                    <h2 className="font-serif text-4xl font-bold mb-6">Mari bangun sesuatu yang bermakna.</h2>
+                    <p className="text-lg opacity-80 font-light mb-8">Bersedia untuk proyek freelance maupun kolaborasi teknis dalam menciptakan solusi digital yang bermanfaat.</p>
                 </div>
                 <div className="md:col-span-6 flex flex-col gap-4">
                     <a className="flex items-center justify-between p-6 bg-white/5 border border-white/10 rounded-xl hover:bg-white/10 transition-colors" href="mailto:mtiaraskinasih@gmail.com">

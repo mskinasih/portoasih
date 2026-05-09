@@ -37,7 +37,7 @@ export default function Hero() {
                 <span className="text-accent-dark font-bold font-handwriting">Kinasih</span>
             </h1>
             <p className="text-base md:text-xl font-light tracking-wide mb-12 opacity-80 uppercase px-4 text-center">
-                Junior Full-Stack Developer — Web, Data & Education
+                Junior Full-Stack Developer — Website, Data & Edukasi
             </p>
 
             <Terminal />
@@ -50,7 +50,7 @@ export default function Hero() {
                     rel="noopener noreferrer"
                 >
                     <Download className="w-4 h-4" />
-                    Download CV
+                    Unduh CV
                 </a>
             </div>
         </section>

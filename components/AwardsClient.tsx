@@ -54,7 +54,7 @@ export default function AwardsClient({ achievements }: { achievements: Achieveme
             <div className="flex items-center justify-between mb-12">
                 <h2 className="font-serif text-3xl font-bold flex items-center gap-4">
                     <span className="h-px w-9 bg-primary/20"></span>
-                    Honors & Awards
+                    Penghargaan & Prestasi
                 </h2>
 
                 {achievements.length > itemsPerView && (

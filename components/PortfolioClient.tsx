@@ -56,7 +56,7 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
             <div className="flex items-center justify-between mb-12">
                 <h2 className="font-serif text-3xl font-bold flex items-center gap-4">
                     <span className="h-px w-12 bg-primary/20"></span>
-                    Selected Works
+                    Proyek Unggulan
                 </h2>
 
                 {/* Navigation Controls */}
@@ -93,10 +93,10 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                         >
                             <div
                                 onClick={() => setSelectedProject(project)}
-                                className="group border-b border-primary/5 pb-8 flex flex-col h-full hover:border-primary/20 transition-colors cursor-pointer"
+                                className="group border border-primary/5 rounded-xl bg-white/30 hover:shadow-lg transition-all overflow-hidden flex flex-col cursor-pointer hover:scale-[1.02] active:scale-[0.98] h-full"
                             >
                                 {/* Image Preview */}
-                                <div className="aspect-video w-full bg-primary/5 rounded-lg mb-6 overflow-hidden relative">
+                                <div className="aspect-video w-full bg-primary/5 overflow-hidden relative flex-shrink-0">
                                     {project.image_url ? (
                                         // eslint-disable-next-line @next/next/no-img-element
                                         <img
@@ -111,29 +111,31 @@ export default function PortfolioClient({ projects }: { projects: PortfolioItem[
                                     )}
                                 </div>
 
-                                <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">{project.title}</h3>
-                                <p className="text-sm opacity-80 mb-4 font-light flex-grow line-clamp-3">{project.description}</p>
+                                <div className="p-6 flex-grow flex flex-col">
+                                    <h3 className="text-xl font-bold mb-2 group-hover:text-accent-dark transition-colors">{project.title}</h3>
+                                    <p className="text-sm opacity-80 mb-4 font-light flex-grow line-clamp-3">{project.description}</p>
 
-                                <div className="flex flex-wrap gap-3 mb-6">
-                                    {project.tech_stack?.map((tech, i) => (
-                                        <span key={i} className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded opacity-70">
-                                            {tech}
-                                        </span>
-                                    ))}
-                                </div>
+                                    <div className="flex flex-wrap gap-3 mb-6">
+                                        {project.tech_stack?.map((tech, i) => (
+                                            <span key={i} className="text-[10px] font-mono border border-primary/20 px-2 py-0.5 rounded opacity-70">
+                                                {tech}
+                                            </span>
+                                        ))}
+                                    </div>
 
-                                <div className="flex items-center gap-6 mt-auto">
-                                    {project.github_url && (
-                                        <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all" href={project.github_url} target="_blank">
-                                            GitHub
-                                        </Link>
-                                    )}
-                                    {project.live_url && (
-                                        <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all group/link" href={project.live_url} target="_blank">
-                                            View Project
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
-                                        </Link>
-                                    )}
+                                    <div className="flex items-center gap-6 mt-auto">
+                                        {project.github_url && (
+                                            <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all" href={project.github_url} target="_blank">
+                                                GitHub
+                                            </Link>
+                                        )}
+                                        {project.live_url && (
+                                            <Link className="inline-flex items-center text-xs font-bold uppercase tracking-widest hover:text-accent-dark transition-all group/link" href={project.live_url} target="_blank">
+                                                View Project
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-arrow-right ml-1 w-3.5 h-3.5 group-hover/link:translate-x-1 transition-transform"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                                            </Link>
+                                        )}
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -47,11 +47,11 @@ export default function Navbar() {
     }, []);
 
     const navLinks = [
-        { name: 'About', href: '#about', icon: User },
-        { name: 'Achievements', href: '#achievements', icon: Award },
-        { name: 'Portfolio', href: '#portfolio', icon: Briefcase },
-        { name: 'Blog', href: '#blog', icon: FileText },
-        { name: 'Contact', href: '#contact', icon: Mail },
+        { name: 'Profil', href: '#about', icon: User },
+        { name: 'Riwayat', href: '#achievements', icon: Award },
+        { name: 'Karya', href: '#portfolio', icon: Briefcase },
+        { name: 'Jurnal', href: '#blog', icon: FileText },
+        { name: 'Kontak', href: '#contact', icon: Mail },
     ];
 
     return (
